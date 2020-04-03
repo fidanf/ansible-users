@@ -108,6 +108,10 @@ users_authorized_keys_exclusive: no
 users_remove: []
 # default user's sudo privileges
 users_become_sudoer: no
+# list of users to be removed,
+users_remove:
+  - { username: foo, remove_homedir: no }
+  - { username: bar }
 
 ```
 
@@ -173,7 +177,9 @@ This is an example playbook:
     users_groups:
       - www-data
     users_authorized_keys_exclusive: yes
-    users_remove: [foobar]
+    users_remove:
+      - { username: foo, remove_homedir: no }
+      - { username: bar }
 
 ```
 
