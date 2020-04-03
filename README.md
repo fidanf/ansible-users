@@ -73,8 +73,13 @@ Here is a list of all the default variables for this role, which are also availa
 #     ssh_key_password: ""
 #     ssh_key_generate: no
 #     ssh_key: "xxx" or "{{ lookup('file', '/path/to/id_rsa') }}"
+#     ssh_keys:
+#       id_rsa_1: "xxx" or "{{ lookup('file', '/path/to/id_rsa') }}"
+#       id_rsa_2: "xxx" or "{{ lookup('file', '/path/to/id_rsa') }}"
 #     shell: /bin/bash
 #     update_password: always
+#     sudoer: yes
+#     sudo_ask_passwd: yes          (defaults to no, eq. 'NOPASSWD')
 #
 
 # list of users to add
@@ -99,11 +104,14 @@ users_ssh_key_type: rsa
 users_ssh_key_bits: 2048
 # default user's setting for authorized keys exclusive
 users_authorized_keys_exclusive: no
+# list of users to be removed
+users_remove: []
+# default user's sudo privileges
+users_become_sudoer: no
 # list of users to be removed,
 users_remove:
   - { username: foo, remove_homedir: no }
   - { username: bar }
-
 
 ```
 
@@ -140,6 +148,10 @@ This is an example playbook:
         home_mode: "0750"
       - username: foobar_key
         ssh_key: "{{ lookup('file', 'tests/id_rsa') }}"
+      - username: foobar_keys
+        ssh_keys:
+          id_rsa_1: "{{ lookup('file', 'tests/id_rsa') }}"
+          id_rsa_2: "{{ lookup('file', 'tests/id_rsa') }}"
       - username: foobar_key_generate
         ssh_key_generate: yes
         ssh_key_password: secret
@@ -148,6 +160,19 @@ This is an example playbook:
       - username: foobar_file
         home_files:
           - "tests/.bashrc"
+      - username: bar_sudo
+        password: $6$pBtCEpYB$6vc5Dhwf.YI6jCUyJRBmgacB4qri2Y1WmINjufblB97sZpuhhEkUvZhTB8rGUKRq.urifltBSSh68rh.esHCS.
+        home: /home/bar_sudo
+        shell: /bin/bash
+        update_password: always
+        sudoer: yes
+      - username: foo_sudo
+        password: $6$bhdpgAcPxL$rNcZtYZj2sAuDD.dNsdT98zEp9zO7Mwt1wjLjYb47hKew062X3Vau3BukY8cRVNtwixqScJMECMu8p3YQDhpf0
+        home: /home/foo_sudo
+        shell: /bin/bash
+        update_password: always
+        sudoer: yes
+        sudo_ask_passwd: yes
     users_group: staff
     users_groups:
       - www-data
